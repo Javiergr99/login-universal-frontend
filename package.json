@@ -1,0 +1,42 @@
+{
+  "name": "login-universal-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "optimize:login-icon": "node scripts/optimize-login-icon.mjs",
+    "test:2fa": "playwright test tests/auth-2fa.spec.js",
+    "doctor": "npx -y react-doctor@0.1.6 . --verbose"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@fortawesome/fontawesome-svg-core": "^7.2.0",
+    "@fortawesome/free-brands-svg-icons": "^7.2.0",
+    "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@fortawesome/react-fontawesome": "^3.3.0",
+    "@lottiefiles/dotlottie-react": "^0.18.7",
+    "@mui/icons-material": "^7.3.9",
+    "@mui/material": "^7.3.9",
+    "@mui/x-date-pickers": "^9.4.0",
+    "axios": "^1.15.0",
+    "d3-geo": "^3.1.1",
+    "dayjs": "^1.11.21",
+    "notistack": "^3.0.2",
+    "prop-types": "^15.8.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-qr-code": "^2.0.18",
+    "react-router-dom": "^7.13.2",
+    "topojson-client": "^3.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@vitejs/plugin-react": "^6.0.1",
+    "sharp": "^0.34.5",
+    "vite": "^8.0.8"
+  }
+}
