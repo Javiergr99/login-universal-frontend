@@ -1,5 +1,5 @@
-import PropTypes from "prop-types";
-import { Box, Typography } from "@mui/material";
+﻿import PropTypes from "prop-types";
+import { Box, Stack, Typography } from "@mui/material";
 
 import DashboardProfileMenu from "./DashboardProfileMenu";
 
@@ -12,19 +12,49 @@ export default function DashboardHeroActions({
   onUpdateProfile,
 }) {
   return (
-    <Box
+    <Stack
+      direction="row"
+      spacing={1.2}
+      alignItems="stretch"
       sx={{
-        display: "grid",
-        gridTemplateColumns: "1fr auto",
-        gap: 1,
-        width: "100%",
-        alignItems: "stretch",
+        width: { xs: "100%", md: "auto" },
       }}
     >
-      <Box sx={statCardStyles}>
-        <Typography sx={statNumberWineStyles}>{registriesCount}</Typography>
+      <Box
+        sx={{
+          minWidth: { xs: 0, sm: 142 },
+          flex: { xs: 1, md: "initial" },
+          borderRadius: "16px",
+          px: 2,
+          py: 1.35,
+          backgroundColor: "#ffffff",
+          border: "1px solid rgba(15,23,42,0.08)",
+          boxShadow: "0 10px 24px rgba(15,23,42,0.04)",
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: "Noto Sans, sans-serif",
+            fontWeight: 950,
+            color: "#611232",
+            fontSize: "1.35rem",
+            lineHeight: 1,
+          }}
+        >
+          {registriesCount}
+        </Typography>
 
-        <Typography sx={statLabelStyles}>Módulos</Typography>
+        <Typography
+          sx={{
+            fontFamily: "Noto Sans, sans-serif",
+            color: "#64748b",
+            fontSize: "0.73rem",
+            fontWeight: 850,
+            mt: 0.5,
+          }}
+        >
+          Módulos activos
+        </Typography>
       </Box>
 
       <DashboardProfileMenu
@@ -34,7 +64,7 @@ export default function DashboardHeroActions({
         onViewProfile={onViewProfile}
         onUpdateProfile={onUpdateProfile}
       />
-    </Box>
+    </Stack>
   );
 }
 
@@ -45,27 +75,4 @@ DashboardHeroActions.propTypes = {
   onLogout: PropTypes.func.isRequired,
   onViewProfile: PropTypes.func.isRequired,
   onUpdateProfile: PropTypes.func.isRequired,
-};
-
-const statCardStyles = {
-  borderRadius: "18px",
-  p: 1.6,
-  background: "rgba(255,255,255,0.66)",
-  border: "1px solid rgba(15,23,42,0.06)",
-};
-
-const statNumberWineStyles = {
-  fontFamily: "Noto Sans, sans-serif",
-  fontWeight: 950,
-  color: "#8f1538",
-  fontSize: "1.45rem",
-  lineHeight: 1,
-};
-
-const statLabelStyles = {
-  fontFamily: "Noto Sans, sans-serif",
-  color: "#64748b",
-  fontSize: "0.74rem",
-  fontWeight: 800,
-  mt: 0.4,
 };

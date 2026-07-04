@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+﻿import PropTypes from "prop-types";
 import { Box, Stack, Typography } from "@mui/material";
 
 import PostLoginLoadingBadge from "./PostLoginLoadingBadge";
@@ -14,55 +14,37 @@ export default function PostLoginWelcomeCard({
     <Box
       sx={{
         width: "100%",
-        maxWidth: 720,
+        maxWidth: 520,
         position: "relative",
         zIndex: 1,
-        borderRadius: { xs: "28px", sm: "36px" },
-        p: "1px",
-        background:
-          "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.36), rgba(188,149,92,0.36))",
+        borderRadius: { xs: "26px", sm: "30px" },
+        backgroundColor: "rgba(255,255,255,0.94)",
+        border: "1px solid rgba(97,18,50,0.08)",
         boxShadow:
-          "0 34px 100px rgba(15, 23, 42, 0.16), 0 10px 34px rgba(159,34,65,0.08)",
-        animation: "cardEnter 520ms cubic-bezier(0.22, 1, 0.36, 1) both",
+          "0 24px 70px rgba(15, 23, 42, 0.10), 0 8px 24px rgba(97,18,50,0.045)",
+        animation: "cardEnter 420ms ease-out both",
       }}
     >
       <Box
         sx={{
-          position: "relative",
-          overflow: "hidden",
-          borderRadius: { xs: "27px", sm: "35px" },
-          px: { xs: 3, sm: 5.5 },
-          py: { xs: 4.5, sm: 5.5 },
+          px: { xs: 3, sm: 4.5 },
+          py: { xs: 4, sm: 4.8 },
           textAlign: "center",
-          background: "rgba(255,255,255,0.78)",
-          backdropFilter: "blur(24px)",
-          border: "1px solid rgba(255,255,255,0.52)",
-
-          "&::after": {
-            content: '""',
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "1px",
-            background:
-              "linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent)",
-          },
         }}
       >
-        <Stack alignItems="center" spacing={2.4}>
+        <Stack alignItems="center" spacing={2.15}>
           <PostLoginSuccessIcon />
 
           <Box>
             <Typography
               sx={{
                 fontFamily: "'Noto Sans', sans-serif",
-                fontWeight: 900,
+                fontWeight: 950,
                 color: "#111827",
-                fontSize: { xs: "1.65rem", sm: "2.35rem" },
-                lineHeight: 1.08,
+                fontSize: { xs: "1.55rem", sm: "1.95rem" },
+                lineHeight: 1.12,
                 letterSpacing: "-0.045em",
-                mb: 1,
+                mb: 0.8,
               }}
             >
               Acceso verificado
@@ -71,13 +53,22 @@ export default function PostLoginWelcomeCard({
             <Typography
               sx={{
                 fontFamily: "'Noto Sans', sans-serif",
-                color: "#374151",
-                fontSize: { xs: "1rem", sm: "1.08rem" },
+                color: "#64748b",
+                fontSize: { xs: "0.96rem", sm: "1rem" },
                 lineHeight: 1.55,
-                fontWeight: 600,
+                fontWeight: 650,
               }}
             >
-              Bienvenido, {displayName}
+              Bienvenido,{" "}
+              <Box
+                component="span"
+                sx={{
+                  color: "#611232",
+                  fontWeight: 850,
+                }}
+              >
+                {displayName}
+              </Box>
             </Typography>
           </Box>
 
@@ -87,15 +78,16 @@ export default function PostLoginWelcomeCard({
 
           <Typography
             sx={{
+              pt: 0.35,
               fontFamily: "'Noto Sans', sans-serif",
               color: "#94a3b8",
-              fontSize: "0.76rem",
+              fontSize: "0.72rem",
               fontWeight: 800,
-              letterSpacing: "0.08em",
+              letterSpacing: "0.075em",
               textTransform: "uppercase",
             }}
           >
-            Registro de Medidas de Protección
+            Redirigiendo de forma segura
           </Typography>
         </Stack>
       </Box>

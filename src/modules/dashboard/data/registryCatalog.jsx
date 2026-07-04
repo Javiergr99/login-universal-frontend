@@ -1,6 +1,6 @@
-import AssignmentTurnedInRoundedIcon from "@mui/icons-material/AssignmentTurnedInRounded";
-import SyncRoundedIcon from "@mui/icons-material/SyncRounded";
-import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
+﻿import AssignmentTurnedInRoundedIcon from "@mui/icons-material/AssignmentTurnedInRounded";
+import PublicRoundedIcon from "@mui/icons-material/PublicRounded";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import HealthAndSafetyRoundedIcon from "@mui/icons-material/HealthAndSafetyRounded";
 
 import routes from "../../../app/routes";
@@ -25,12 +25,12 @@ export const registryCatalog = {
     groupCode: "RNCAS",
     accessRule: REGISTRY_ACCESS_RULES.rncas,
     code: "RNCAS",
-    title: "Registro Nacional de Centros de Asistencia Social",
-    subtitle: "Centros de asistencia social",
+    title: "Minería de datos públicos nacional de centros de asistencia social",
+    subtitle: "Registro Nacional de Centros de Asistencia Social",
     description:
-      "Consulta y da seguimiento a la información relacionada con centros de asistencia social y los registros habilitados para tu perfil.",
+      "Consulta información relacionada con centros de asistencia social, registros habilitados y datos institucionales disponibles según los permisos asignados a tu perfil.",
     route: routes.rncas || routes.dashboard,
-    icon: <AssignmentTurnedInRoundedIcon sx={{ fontSize: 34 }} />,
+    icon: <AssignmentTurnedInRoundedIcon />,
   },
 
   rmh: {
@@ -46,12 +46,12 @@ export const registryCatalog = {
     groupCode: "MH",
     accessRule: REGISTRY_ACCESS_RULES.movilidadHumana,
     code: "RMH",
-    title: "Registro de Niñas, Niños y Adolescentes en Movilidad Humana",
-    subtitle: "Movilidad humana",
+    title: "Minería de datos públicos de NNA en contexto de movilidad humana",
+    subtitle: "Registro de Niñas, Niños y Adolescentes en Movilidad Humana",
     description:
-      "Accede al módulo de movilidad humana para consultar información, validar datos y continuar con los flujos habilitados.",
+      "Accede a información de niñas, niños y adolescentes en contexto de movilidad humana, incluyendo datos generales, localización, vínculos familiares y condiciones de tránsito.",
     route: routes.movilidadHumana || routes.dashboard,
-    icon: <SyncRoundedIcon sx={{ fontSize: 34 }} />,
+    icon: <PublicRoundedIcon />,
   },
 
   dvf: {
@@ -66,12 +66,12 @@ export const registryCatalog = {
     groupCode: "VF",
     accessRule: REGISTRY_ACCESS_RULES.vivirEnFamilia,
     code: "DVF",
-    title: "Registro del Derecho a Vivir en Familia",
-    subtitle: "Derecho a vivir en familia",
+    title: "Minería de datos públicos del derecho a vivir en familia",
+    subtitle: "Registro del Derecho a Vivir en Familia",
     description:
-      "Ingresa al registro vinculado con el derecho a vivir en familia y consulta la información disponible según tus privilegios.",
+      "Consulta información vinculada con procedimientos de adopción, acogimiento familiar y procesos relacionados con el derecho de niñas, niños y adolescentes a vivir en familia.",
     route: routes.vivirEnFamilia || routes.dashboard,
-    icon: <FavoriteBorderRoundedIcon sx={{ fontSize: 34 }} />,
+    icon: <HomeRoundedIcon />,
   },
 
   rmp: {
@@ -88,11 +88,11 @@ export const registryCatalog = {
     groupCode: "MP",
     accessRule: REGISTRY_ACCESS_RULES.medidasProteccion,
     code: "RMP",
-    title: "Registro de Medidas de Protección",
-    subtitle: "Medidas de protección",
+    title: "Minería de datos públicos de medidas de protección",
+    subtitle: "Registro de Medidas de Protección",
     description:
-      "Accede al registro de medidas de protección para consultar, capturar o dar seguimiento a los casos asociados a tu cuenta.",
+      "Ingresa al registro de medidas de protección para consultar, capturar o dar seguimiento a los casos asociados a tu cuenta y permisos institucionales.",
     route: routes.medidas || routes.dashboard,
-    icon: <HealthAndSafetyRoundedIcon sx={{ fontSize: 34 }} />,
+    icon: <HealthAndSafetyRoundedIcon />,
   },
 };

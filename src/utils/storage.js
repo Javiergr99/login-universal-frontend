@@ -1,21 +1,11 @@
-const STORAGE_KEYS = {
+﻿const STORAGE_KEYS = {
   token: "token",
   refreshToken: "refresh_token",
   tokenType: "token_type",
   user: "auth_user",
   rememberedUser: "remember_user",
 
-  /**
-   * Key versionada.
-   * Esto evita que una estructura vieja de sessionStorage rompa la app
-   * si en el futuro cambia el contrato del reto 2FA.
-   */
   pendingTwoFactor: "pending_2fa_challenge:v1",
-
-  /**
-   * Key anterior.
-   * Se conserva solo para limpiar/migrar sesiones viejas.
-   */
   legacyPendingTwoFactor: "pending_2fa_challenge",
 
   postLoginWelcome: "show_post_login_welcome",
@@ -50,19 +40,15 @@ function isValidPendingTwoFactorStatus(status) {
   return VALID_PENDING_2FA_STATUSES.includes(String(status || ""));
 }
 
-/**
- * Normaliza el reto 2FA antes de guardarlo o recuperarlo.
- *
- * Si el reto no tiene expiresAt, se le asigna uno.
- * Esto evita romper pruebas o sesiones generadas antes de agregar expiración,
- * pero ya no permite que vivan indefinidamente.
- */
 function normalizePendingTwoFactorChallenge(challenge) {
   if (!challenge || typeof challenge !== "object" || Array.isArray(challenge)) {
     return null;
   }
 
-  const tempUserId =
+  const tempToken =
+    challenge.tempToken ||
+    challenge.temp_token ||
+    challenge.token ||
     challenge.tempUserId ||
     challenge.temp_user_id ||
     challenge.userId ||
@@ -72,7 +58,7 @@ function normalizePendingTwoFactorChallenge(challenge) {
 
   const status = challenge.status || "";
 
-  if (!tempUserId || !isValidPendingTwoFactorStatus(status)) {
+  if (!tempToken || !isValidPendingTwoFactorStatus(status)) {
     return null;
   }
 
@@ -85,7 +71,7 @@ function normalizePendingTwoFactorChallenge(challenge) {
 
   return {
     ...challenge,
-    tempUserId: String(tempUserId),
+    tempToken: String(tempToken),
     status,
     expiresAt,
   };
@@ -190,11 +176,6 @@ export function getPendingTwoFactorChallenge() {
     return versionedChallenge;
   }
 
-  /**
-   * Compatibilidad temporal:
-   * Si existe una sesión vieja con la key anterior, se migra a v1
-   * agregando expiración.
-   */
   const legacyChallenge = readPendingTwoFactorChallengeFromStorage(
     STORAGE_KEYS.legacyPendingTwoFactor
   );
@@ -228,9 +209,6 @@ export function persistPendingTwoFactorChallenge(challenge) {
     JSON.stringify(normalizedChallenge)
   );
 
-  /**
-   * Limpiamos la key anterior para evitar inconsistencias.
-   */
   sessionStorage.removeItem(STORAGE_KEYS.legacyPendingTwoFactor);
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useRef } from "react";
+﻿import { useEffect, useMemo, useReducer, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
@@ -112,9 +112,9 @@ export function useTwoFactorFlow() {
   const activeChallenge =
     pendingTwoFactor ||
     routeChallenge ||
-    (storedTwoFactor?.userId
+    (storedTwoFactor?.tempToken
       ? {
-          tempUserId: storedTwoFactor.userId,
+          tempToken: storedTwoFactor.tempToken,
           status: storedTwoFactor.status,
         }
       : null);
@@ -128,32 +128,31 @@ export function useTwoFactorFlow() {
     activeChallenge?.qrImageUrl ||
     null;
 
-  const tempUserId =
-    activeChallenge?.tempUserId ||
-    activeChallenge?.user_id ||
-    activeChallenge?.userId ||
-    activeChallenge?.id ||
+  const tempToken =
+    activeChallenge?.tempToken ||
+    activeChallenge?.temp_token ||
+    activeChallenge?.token ||
     "";
 
   const canSubmit = useMemo(() => {
     return (
       verificationCode.trim().length === 6 &&
       !loading &&
-      Boolean(tempUserId)
+      Boolean(tempToken)
     );
-  }, [verificationCode, loading, tempUserId]);
+  }, [verificationCode, loading, tempToken]);
 
   useEffect(() => {
-    if (!activeChallenge || !tempUserId || !challengeStatus) {
+    if (!activeChallenge || !tempToken || !challengeStatus) {
       navigate(routes.login || "/login", { replace: true });
     }
-  }, [activeChallenge, challengeStatus, navigate, tempUserId]);
+  }, [activeChallenge, challengeStatus, navigate, tempToken]);
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadSetupQr() {
-      if (!isSetupMode || !tempUserId || qrImageUrl) return;
+      if (!isSetupMode || !tempToken || qrImageUrl) return;
 
       dispatch({
         type: TWO_FACTOR_ACTIONS.QR_REQUEST_STARTED,
@@ -161,7 +160,7 @@ export function useTwoFactorFlow() {
 
       try {
         const qrBlob = await fetchTwoFactorSetupQr({
-          userId: String(tempUserId),
+          tempToken,
         });
 
         const objectUrl = URL.createObjectURL(qrBlob);
@@ -209,7 +208,7 @@ export function useTwoFactorFlow() {
     enqueueSnackbar,
     isSetupMode,
     qrImageUrl,
-    tempUserId,
+    tempToken,
     updatePendingTwoFactorChallenge,
   ]);
 
@@ -292,7 +291,6 @@ export function useTwoFactorFlow() {
     if (!canSubmit) return;
 
     const cleanCode = verificationCode.replace(/\D/g, "").slice(0, 6);
-    const cleanUserId = String(tempUserId).trim();
 
     try {
       dispatch({
@@ -302,11 +300,11 @@ export function useTwoFactorFlow() {
 
       const sessionResponse = isSetupMode
         ? await enableTwoFactorRequest({
-            userId: cleanUserId,
+            tempToken,
             code: cleanCode,
           })
         : await verifyTwoFactorRequest({
-            userId: cleanUserId,
+            tempToken,
             code: cleanCode,
           });
 

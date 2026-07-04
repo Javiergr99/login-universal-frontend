@@ -1,5 +1,5 @@
-import { useMemo, useReducer } from "react";
-import { useNavigate } from "react-router-dom";
+﻿import { useEffect, useMemo, useReducer } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 
@@ -13,6 +13,10 @@ import {
   getRememberedUser,
   setRememberedUser,
 } from "../../../utils/storage";
+import {
+  SESSION_INACTIVITY_MESSAGE,
+  SESSION_INACTIVITY_REASON,
+} from "../../../utils/sessionInactivity";
 
 import LoginAccessCard from "../components/LoginAccessCard";
 import LoginBackground from "../components/LoginBackground";
@@ -82,8 +86,28 @@ function loginReducer(state, action) {
   }
 }
 
+function normalizeTempToken(response) {
+  return String(
+    response?.temp_token ||
+      response?.tempToken ||
+      response?.token ||
+      ""
+  ).trim();
+}
+
+function getTwoFactorHelpMessage(status, fallbackMessage = "") {
+  const baseMessage =
+    fallbackMessage ||
+    (status === "pending_setup"
+      ? "Es obligatorio configurar la seguridad de 2 pasos."
+      : "Ingresa tu código de autenticación en dos pasos.");
+
+  return `${baseMessage} Asegúrate de que tu dispositivo tenga fecha y hora automáticas para evitar desfases con Google Authenticator.`;
+}
+
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { enqueueSnackbar } = useSnackbar();
   const { startTwoFactorChallenge } = useAuth();
 
@@ -98,6 +122,33 @@ export default function LoginPage() {
   const canSubmit = useMemo(() => {
     return curp.trim().length === 18 && password.trim().length > 0 && !loading;
   }, [curp, password, loading]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search || "");
+    const reason = searchParams.get("reason");
+
+    if (reason !== SESSION_INACTIVITY_REASON) {
+      return;
+    }
+
+    enqueueSnackbar(SESSION_INACTIVITY_MESSAGE, {
+      variant: "warning",
+    });
+
+    searchParams.delete("reason");
+
+    const nextSearch = searchParams.toString();
+
+    navigate(
+      {
+        pathname: location.pathname,
+        search: nextSearch ? `?${nextSearch}` : "",
+      },
+      {
+        replace: true,
+      }
+    );
+  }, [enqueueSnackbar, location.pathname, location.search, navigate]);
 
   function handleCurpChange(event) {
     dispatch({
@@ -143,18 +194,12 @@ export default function LoginPage() {
         payload: true,
       });
 
-      /**
-       * Limpiamos una sesión anterior antes de iniciar un nuevo flujo.
-       * Esto evita que un token viejo afecte /login, /setup o /login/2fa.
-       */
       clearAuthSession();
 
       const response = await loginRequest({
         curp: curpValue,
         password,
       });
-
-      console.log("Respuesta login:", response);
 
       if (remember) {
         setRememberedUser(curpValue);
@@ -163,41 +208,28 @@ export default function LoginPage() {
       }
 
       const status = response?.status;
-      const tempUserId =
-        response?.temp_user_id ||
-        response?.tempUserId ||
-        response?.user_id ||
-        response?.userId;
+      const tempToken = normalizeTempToken(response);
 
       const isValidTwoFactorStatus =
         status === "pending_setup" || status === "pending_2fa";
 
-      if (!isValidTwoFactorStatus || !tempUserId) {
+      if (!isValidTwoFactorStatus || !tempToken) {
         enqueueSnackbar("No se pudo determinar el flujo de autenticación.", {
           variant: "warning",
         });
 
-        console.warn("Respuesta inesperada de /login:", response);
+        console.warn("Respuesta inesperada de /auth/login.");
         return;
       }
 
       const challenge = {
         status,
-        tempUserId: String(tempUserId),
+        tempToken,
         curp: curpValue,
         userHint: curpValue,
-        message:
-          response?.message ||
-          (status === "pending_setup"
-            ? "Es obligatorio configurar la seguridad de 2 pasos."
-            : "Ingresa tu código de autenticación en dos pasos."),
+        message: getTwoFactorHelpMessage(status, response?.message),
       };
 
-      /**
-       * Guardamos el reto 2FA en el contexto de autenticación.
-       * AuthContext también se encarga de persistir el respaldo temporal,
-       * para que una recarga accidental no rompa el flujo.
-       */
       startTwoFactorChallenge(challenge);
 
       enqueueSnackbar(
@@ -209,7 +241,7 @@ export default function LoginPage() {
         }
       );
 
-      navigate(routes.twoFactor || "/two-factor", {
+      navigate(routes.twoFactor || "/auth/verificacion-2fa", {
         replace: true,
         state: {
           challenge,

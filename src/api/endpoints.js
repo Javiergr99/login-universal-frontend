@@ -1,12 +1,15 @@
-const endpoints = {
+﻿const endpoints = {
   auth: {
-    login: "/login",
+    login: "/auth/login",
     me: "/users/me",
-    setupTwoFactor: "/setup",
-    enableTwoFactor: "/enable",
-    verifyTwoFactor: "/login/2fa",
-    refresh: "/refresh",
-    logout: "/logout",
+    setupTwoFactor: "/auth/setup",
+    enableTwoFactor: "/auth/enable",
+    verifyTwoFactor: "/auth/login/2fa",
+    refresh: "/auth/refresh",
+    logout: "/auth/logout",
+    redirectCode: "/auth/redirect-code",
+    exchangeCode: "/auth/exchange-code",
+    resetPassword: "/auth/restablecer-password",
   },
 
   users: {

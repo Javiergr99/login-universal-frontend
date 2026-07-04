@@ -1,10 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 
 import routes from "../../../app/routes";
 import { useAuth } from "../../../hooks/useAuth";
+import {
+  buildRedirectCodeUrl,
+  getCleanRedirectUrl,
+} from "../../../utils/authRedirect";
+import { createRedirectCodeRequest } from "../../auth/services/auth.service";
 
 import DashboardHero from "../components/DashboardHero";
 import DashboardModulesPanel from "../components/DashboardModulesPanel";
@@ -49,8 +54,10 @@ export default function DashboardPage() {
   const { logout, user: authUser } = useAuth();
 
   const [loggingOut, setLoggingOut] = useState(false);
+  const [openingRegistry, setOpeningRegistry] = useState(false);
 
   const accessDeniedHandledRef = useRef("");
+  const openingRegistryRef = useRef(false);
 
   const user = useMemo(() => {
     return authUser || getStoredDashboardUser();
@@ -118,7 +125,35 @@ export default function DashboardPage() {
     navigate(`${routes.profile}?mode=edit`);
   }
 
-  function handleSelectRegistry(route) {
+  async function handleSelectExternalRegistry(route) {
+    const cleanRedirectUrl = getCleanRedirectUrl(route);
+
+    if (!cleanRedirectUrl) {
+      enqueueSnackbar("No fue posible preparar la ruta del módulo seleccionado.", {
+        variant: "warning",
+      });
+      return;
+    }
+
+    const redirectCodeResponse = await createRedirectCodeRequest({
+      redirectUrl: cleanRedirectUrl,
+    });
+
+    const finalRedirectUrl = buildRedirectCodeUrl({
+      redirectUrl: cleanRedirectUrl,
+      code: redirectCodeResponse?.code,
+    });
+
+    if (!finalRedirectUrl) {
+      throw new Error("No se recibió un código temporal de redirección válido.");
+    }
+
+    window.location.replace(finalRedirectUrl);
+  }
+
+  async function handleSelectRegistry(route) {
+    if (openingRegistryRef.current) return;
+
     if (!route) {
       enqueueSnackbar("No se encontró la ruta del módulo seleccionado.", {
         variant: "warning",
@@ -126,12 +161,26 @@ export default function DashboardPage() {
       return;
     }
 
-    if (isExternalUrl(route)) {
-      window.location.assign(route);
+    if (!isExternalUrl(route)) {
+      navigate(route);
       return;
     }
 
-    navigate(route);
+    openingRegistryRef.current = true;
+    setOpeningRegistry(true);
+
+    try {
+      await handleSelectExternalRegistry(route);
+    } catch (error) {
+      console.warn("No fue posible abrir el módulo seleccionado:", error);
+
+      enqueueSnackbar("No fue posible abrir el módulo seleccionado.", {
+        variant: "error",
+      });
+
+      openingRegistryRef.current = false;
+      setOpeningRegistry(false);
+    }
   }
 
   return (
@@ -172,6 +221,13 @@ export default function DashboardPage() {
           filter: "blur(10px)",
           pointerEvents: "none",
         },
+
+        ...(openingRegistry
+          ? {
+              pointerEvents: "none",
+              opacity: 0.94,
+            }
+          : {}),
       }}
     >
       <Box

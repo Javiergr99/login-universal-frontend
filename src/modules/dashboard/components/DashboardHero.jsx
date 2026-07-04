@@ -1,8 +1,9 @@
-import PropTypes from "prop-types";
+﻿import PropTypes from "prop-types";
 import { Box, Stack, Typography } from "@mui/material";
 
+import DashboardCustomizeRoundedIcon from "@mui/icons-material/DashboardCustomizeRounded";
+
 import DashboardHeroActions from "./hero/DashboardHeroActions";
-import DashboardHeroBadges from "./hero/DashboardHeroBadges";
 
 export default function DashboardHero({
   displayName,
@@ -14,108 +15,90 @@ export default function DashboardHero({
 }) {
   return (
     <Box
+      component="section"
       sx={{
-        mb: { xs: 3, md: 4 },
-        borderRadius: { xs: "28px", md: "36px" },
-        p: "1px",
-        background:
-          "linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.42), rgba(188,149,92,0.28))",
-        boxShadow:
-          "0 28px 80px rgba(15,23,42,0.10), 0 10px 30px rgba(159,34,65,0.06)",
+        mb: { xs: 3.2, md: 4 },
       }}
     >
-      <Box
-        sx={{
-          borderRadius: { xs: "27px", md: "35px" },
-          p: { xs: 3, sm: 3.5, md: 4 },
-          background: "rgba(255,255,255,0.80)",
-          border: "1px solid rgba(255,255,255,0.72)",
-          backdropFilter: "blur(22px)",
-          position: "relative",
-          overflow: "hidden",
-
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(120deg, rgba(255,255,255,0.42), transparent 38%, rgba(188,149,92,0.07))",
-            pointerEvents: "none",
-          },
-        }}
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        justifyContent="space-between"
+        alignItems={{ xs: "flex-start", md: "center" }}
+        spacing={2.5}
       >
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          justifyContent="space-between"
-          alignItems={{ xs: "flex-start", md: "center" }}
-          spacing={3}
-          sx={{ position: "relative", zIndex: 1 }}
-        >
-          <Box sx={{ maxWidth: 760 }}>
-            <DashboardHeroBadges />
+        <Stack direction="row" spacing={2.2} alignItems="flex-start">
+          <Box
+            sx={{
+              width: 42,
+              height: 42,
+              minWidth: 42,
+              borderRadius: "14px",
+              color: "#9f2241",
+              backgroundColor: "rgba(97,18,50,0.055)",
+              border: "1px solid rgba(97,18,50,0.10)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mt: 0.4,
+            }}
+          >
+            <DashboardCustomizeRoundedIcon sx={{ fontSize: 25 }} />
+          </Box>
 
+          <Box>
             <Typography
               component="h1"
               sx={{
                 fontFamily: "Noto Sans, sans-serif",
                 fontWeight: 950,
                 fontSize: {
-                  xs: "1.9rem",
-                  sm: "2.35rem",
-                  md: "2.8rem",
+                  xs: "1.75rem",
+                  sm: "2.15rem",
+                  md: "2.55rem",
                 },
                 color: "#111827",
-                lineHeight: 1.03,
-                letterSpacing: "-0.055em",
-                mb: 1.3,
+                lineHeight: 1.05,
+                letterSpacing: "-0.052em",
+                mb: 0.8,
               }}
             >
-              Registros disponibles
+              Módulos de registros disponibles
             </Typography>
 
             <Typography
               sx={{
                 fontFamily: "Noto Sans, sans-serif",
                 color: "#64748b",
-                fontSize: { xs: "0.96rem", sm: "1.02rem" },
-                lineHeight: 1.75,
-                maxWidth: 760,
+                fontSize: { xs: "0.95rem", sm: "1.02rem" },
+                lineHeight: 1.65,
+                maxWidth: 820,
               }}
             >
               Bienvenido,{" "}
               <Box
                 component="span"
                 sx={{
-                  color: "#8f1538",
+                  color: "#611232",
                   fontWeight: 950,
                 }}
               >
                 {displayName}
               </Box>
-              . Selecciona el registro al que deseas ingresar para continuar
-              con tus actividades dentro de la plataforma.
+              . Selecciona un módulo para explorar y consultar la información
+              disponible.
             </Typography>
           </Box>
-
-          <Stack
-            spacing={1.4}
-            alignItems={{ xs: "stretch", md: "flex-end" }}
-            sx={{
-              width: { xs: "100%", md: "auto" },
-              minWidth: { md: 260 },
-            }}
-          >
-            <DashboardHeroActions
-              registriesCount={registriesCount}
-              displayName={displayName}
-              loggingOut={loggingOut}
-              onLogout={onLogout}
-              onViewProfile={onViewProfile}
-              onUpdateProfile={onUpdateProfile}
-            />
-          </Stack>
         </Stack>
-      </Box>
+
+        <DashboardHeroActions
+          registriesCount={registriesCount}
+          displayName={displayName}
+          loggingOut={loggingOut}
+          onLogout={onLogout}
+          onViewProfile={onViewProfile}
+          onUpdateProfile={onUpdateProfile}
+        />
+      </Stack>
     </Box>
   );
 }

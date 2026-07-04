@@ -1,15 +1,15 @@
-import { Box } from "@mui/material";
+﻿import { Box } from "@mui/material";
 
 export default function PostLoginSuccessIcon() {
   return (
     <Box
       sx={{
-        width: 104,
-        height: 104,
+        width: 82,
+        height: 82,
         position: "relative",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        display: "grid",
+        placeItems: "center",
+        animation: "iconEnter 360ms ease-out both",
       }}
     >
       <Box
@@ -17,48 +17,35 @@ export default function PostLoginSuccessIcon() {
           position: "absolute",
           inset: 0,
           borderRadius: "50%",
-          background: "rgba(159,34,65,0.10)",
-          animation: "ringPulse 1.9s ease-out infinite",
+          border: "1.5px solid rgba(97,18,50,0.10)",
+          borderTopColor: "rgba(97,18,50,0.58)",
+          animation: "iconRing 1500ms linear infinite",
         }}
       />
 
       <Box
         sx={{
-          position: "absolute",
-          inset: 9,
-          borderRadius: "50%",
-          border: "1px solid rgba(188,149,92,0.34)",
-          animation: "ringPulse 1.9s ease-out infinite 0.35s",
-        }}
-      />
-
-      <Box
-        sx={{
-          width: 74,
-          height: 74,
-          borderRadius: "26px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background:
-            "linear-gradient(135deg, #9f2241 0%, #8f1538 44%, #bc955c 100%)",
-          boxShadow:
-            "0 22px 46px rgba(159,34,65,0.24), inset 0 1px 0 rgba(255,255,255,0.26)",
-          animation: "iconLift 520ms ease-out both",
+          width: 58,
+          height: 58,
+          borderRadius: "20px",
+          display: "grid",
+          placeItems: "center",
+          backgroundColor: "#611232",
+          boxShadow: "0 16px 36px rgba(97,18,50,0.18)",
         }}
       >
         <Box
           component="svg"
           viewBox="0 0 52 52"
           sx={{
-            width: 40,
-            height: 40,
+            width: 33,
+            height: 33,
             fill: "none",
           }}
         >
           <Box
             component="path"
-            d="M15 27.5L22.5 35L38 17"
+            d="M15.5 27.4L22.6 34.5L37.5 18.5"
             sx={{
               stroke: "#ffffff",
               strokeWidth: 5,
@@ -66,7 +53,7 @@ export default function PostLoginSuccessIcon() {
               strokeLinejoin: "round",
               strokeDasharray: 60,
               strokeDashoffset: 60,
-              animation: "checkDraw 720ms ease-out 220ms forwards",
+              animation: "checkDraw 620ms ease-out 160ms forwards",
             }}
           />
         </Box>

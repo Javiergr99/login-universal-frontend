@@ -1,6 +1,4 @@
-const REDIRECT_STORAGE_KEY = "auth_redirect_target:v1";
-const AUTH_BRIDGE_PARAM =
-  import.meta.env.VITE_AUTH_BRIDGE_PARAM || "auth_bridge";
+﻿const REDIRECT_STORAGE_KEY = "auth_redirect_target:v1";
 
 const DEFAULT_ALLOWED_REDIRECT_ORIGINS = [
   "http://localhost:5173",
@@ -20,23 +18,6 @@ function getAllowedRedirectOrigins() {
   );
 }
 
-function encodeBase64Url(payload) {
-  const jsonValue = JSON.stringify(payload);
-  const bytes = new TextEncoder().encode(jsonValue);
-
-  let binaryValue = "";
-
-  for (const byte of bytes) {
-    binaryValue += String.fromCharCode(byte);
-  }
-
-  return window
-    .btoa(binaryValue)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/g, "");
-}
-
 export function normalizeAuthRedirectTarget(value) {
   if (!value) return "";
 
@@ -52,6 +33,35 @@ export function normalizeAuthRedirectTarget(value) {
   } catch {
     return "";
   }
+}
+
+export function getCleanRedirectUrl(value) {
+  const safeRedirectUrl = normalizeAuthRedirectTarget(value);
+
+  if (!safeRedirectUrl) {
+    return "";
+  }
+
+  const targetUrl = new URL(safeRedirectUrl);
+
+  targetUrl.search = "";
+  targetUrl.hash = "";
+
+  return targetUrl.toString();
+}
+
+export function buildRedirectCodeUrl({ redirectUrl, code }) {
+  const cleanRedirectUrl = getCleanRedirectUrl(redirectUrl);
+
+  if (!cleanRedirectUrl || !code) {
+    return "";
+  }
+
+  const targetUrl = new URL(cleanRedirectUrl);
+
+  targetUrl.searchParams.set("code", code);
+
+  return targetUrl.toString();
 }
 
 export function getAuthRedirectFromLocation(location = window.location) {
@@ -94,41 +104,4 @@ export function isExternalRedirectTarget(value) {
   } catch {
     return false;
   }
-}
-
-export function buildAuthBridgeRedirectUrl({ redirectUrl, session }) {
-  const safeRedirectUrl = normalizeAuthRedirectTarget(redirectUrl);
-
-  if (!safeRedirectUrl) {
-    return "";
-  }
-
-  const targetUrl = new URL(safeRedirectUrl);
-
-  const payload = {
-    token: session?.token || "",
-    refreshToken: session?.refreshToken || "",
-    tokenType: session?.tokenType || "bearer",
-    user: session?.user || null,
-    issuedAt: Date.now(),
-    source: "login_universal_frontend",
-  };
-
-  if (!payload.token) {
-    return "";
-  }
-
-  const encodedPayload = encodeBase64Url(payload);
-
-  const hashValue = targetUrl.hash?.startsWith("#")
-    ? targetUrl.hash.slice(1)
-    : targetUrl.hash || "";
-
-  const hashParams = new URLSearchParams(hashValue);
-
-  hashParams.set(AUTH_BRIDGE_PARAM, encodedPayload);
-
-  targetUrl.hash = hashParams.toString();
-
-  return targetUrl.toString();
 }

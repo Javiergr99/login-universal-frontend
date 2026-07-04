@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import routes from "../../../app/routes";
@@ -9,18 +9,20 @@ import {
 } from "../../../utils/storage";
 import { getAuthUserDisplayName } from "../helpers/auth.helper";
 import {
-  buildAuthBridgeRedirectUrl,
+  buildRedirectCodeUrl,
   clearStoredAuthRedirectTarget,
+  getCleanRedirectUrl,
   getStoredAuthRedirectTarget,
   isExternalRedirectTarget,
 } from "../../../utils/authRedirect";
+import { createRedirectCodeRequest } from "../services/auth.service";
 
-const POST_LOGIN_REDIRECT_DELAY_MS = 2200;
+const POST_LOGIN_REDIRECT_DELAY_MS = 2100;
 
 const loadingMessages = [
-  "Verificando permisos de acceso...",
-  "Preparando módulos disponibles...",
-  "Cargando tu espacio de trabajo...",
+  "Verificando permisos de acceso",
+  "Preparando módulos disponibles",
+  "Abriendo tu espacio de trabajo",
 ];
 
 export function usePostLoginWelcome() {
@@ -46,35 +48,55 @@ export function usePostLoginWelcome() {
     }, 620);
 
     const redirectTimer = window.setTimeout(() => {
-      clearPostLoginWelcomeFlag();
+      async function redirectAfterWelcome() {
+        clearPostLoginWelcomeFlag();
 
-      if (redirectTarget) {
-        const session = getStoredAuthSession();
+        if (!redirectTarget) {
+          navigate(routes.dashboard, {
+            replace: true,
+          });
+          return;
+        }
 
         clearStoredAuthRedirectTarget();
 
         if (isExternalRedirectTarget(redirectTarget)) {
-          const bridgeUrl = buildAuthBridgeRedirectUrl({
-            redirectUrl: redirectTarget,
-            session,
+          try {
+            const cleanRedirectUrl = getCleanRedirectUrl(redirectTarget);
+
+            const redirectCodeResponse = await createRedirectCodeRequest({
+              redirectUrl: cleanRedirectUrl,
+            });
+
+            const finalRedirectUrl = buildRedirectCodeUrl({
+              redirectUrl: cleanRedirectUrl,
+              code: redirectCodeResponse?.code,
+            });
+
+            if (finalRedirectUrl) {
+              window.location.replace(finalRedirectUrl);
+              return;
+            }
+          } catch (error) {
+            console.warn(
+              "No fue posible generar el código temporal de redirección:",
+              error
+            );
+          }
+
+          navigate(routes.dashboard, {
+            replace: true,
           });
 
-          if (bridgeUrl) {
-            window.location.replace(bridgeUrl);
-            return;
-          }
+          return;
         }
 
         navigate(redirectTarget, {
           replace: true,
         });
-
-        return;
       }
 
-      navigate(routes.dashboard, {
-        replace: true,
-      });
+      redirectAfterWelcome();
     }, POST_LOGIN_REDIRECT_DELAY_MS);
 
     return () => {
